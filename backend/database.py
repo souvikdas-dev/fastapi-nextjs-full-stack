@@ -10,7 +10,7 @@ POSTGRES_DB = "fnfs"
 POSTGRES_USER = "postgres"
 POSTGRES_PASSWORD = "password"
 
-engine = create_engine("sqlite:///database.sqlite", echo=True)
+engine = create_engine("sqlite:///db.sqlite3", echo=True)
 
 FIRST_SUPERUSER_NAME = "admin"
 FIRST_SUPERUSER = "admin@example.com"
