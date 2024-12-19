@@ -1,4 +1,11 @@
-from pydantic import BaseModel, EmailStr
+
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+)
+
+from validators import NameStr
 
 
 class User(BaseModel):
@@ -11,10 +18,18 @@ class User(BaseModel):
 
 
 class UserCreate(BaseModel):
-    name: str
-    email: str
-    password: str
-    password_confirmation: str
+    name: NameStr = Field(
+        min_length=3, max_length=50
+    )  # name should be between 3 to 50 characters
+    email: EmailStr
+    password: str = Field(min_length=8)  # Password should be at least 8 characters long
+    confirm_password: str
+
+    # @model_validator(mode="after")
+    # def check_passwords_match(self):
+    #     if self.password != self.password_repeat:
+    #         raise ValueError("Passwords do not match")
+    #     return self
 
 
 # JSON payload containing access token
