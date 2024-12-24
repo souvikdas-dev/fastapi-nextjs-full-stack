@@ -1,12 +1,9 @@
 import click
-from sqlalchemy.dialects import sqlite
 from sqlalchemy.orm import Session
-from sqlalchemy.schema import CreateTable
 
-from database import drop_db as dropdb
-from database import engine
-from database import init_db as initdb
-from models import User
+from core.database import drop_db as dropdb
+from core.database import engine
+from core.database import init_db as initdb
 
 
 @click.group()
@@ -28,23 +25,6 @@ def init_db():
 def drop_db():
     dropdb()
     click.echo("Dropped the database")
-
-
-@cli.command()
-def test():
-    """
-    docstring
-    """
-    super_user = User(
-        name="name",
-        email="email@example.com",
-        password="password",
-        # is_superuser=True,
-    )
-
-    print(super_user)
-
-    print(CreateTable(User.__table__).compile(dialect=sqlite.dialect()))
 
 
 if __name__ == "__main__":

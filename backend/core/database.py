@@ -1,20 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from core.config import settings
+from core.security import get_password_hash
 from models import Base, User
-from security import get_password_hash
 
-POSTGRES_SERVER = "localhost"
-POSTGRES_PORT = 5432
-POSTGRES_DB = "fnfs"
-POSTGRES_USER = "postgres"
-POSTGRES_PASSWORD = "password"
-
-engine = create_engine("sqlite:///database.sqlite", echo=True)
-
-FIRST_SUPERUSER_NAME = "admin"
-FIRST_SUPERUSER = "admin@example.com"
-FIRST_SUPERUSER_PASSWORD = "password"
+engine = create_engine(settings.SQLITE_URL, echo=True)
 
 
 def init_db(session: Session) -> None:
@@ -24,13 +15,13 @@ def init_db(session: Session) -> None:
     Base.metadata.create_all(engine)
 
     # check if super user exists
-    super_user = session.query(User).filter_by(email=FIRST_SUPERUSER).first()
+    super_user = session.query(User).filter_by(email=settings.SUPERUSER_EMAIL).first()
 
     if not super_user:
         super_user = User(
-            name=FIRST_SUPERUSER_NAME,
-            email=FIRST_SUPERUSER,
-            password=get_password_hash(FIRST_SUPERUSER_PASSWORD),
+            name=settings.SUPERUSER_NAME,
+            email=settings.SUPERUSER_EMAIL,
+            password=get_password_hash(settings.SUPERUSER_PASSWORD),
             is_superuser=True,
         )
 
@@ -39,7 +30,7 @@ def init_db(session: Session) -> None:
         session.refresh(super_user)
 
 
-def drop_db():
+def drop_db() -> None:
     """
     docstring
     """
