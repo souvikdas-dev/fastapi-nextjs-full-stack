@@ -2,10 +2,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 
 from core.dependencies import DBSessionDep
-from core.security import generate_jwt, get_password_hash, verify_password
+from core.security import (
+    authenticate_user,
+    generate_jwt,
+    get_password_hash,
+)
 from models import User
 from schemas import Token, UserRegister
 
@@ -38,23 +41,13 @@ async def register(user: UserRegister, db: DBSessionDep) -> Token:
     return Token(access_token=generate_jwt({"user_id": db_user.id}))
 
 
-@router.post("/token")
+@router.post("/login")
 def login_access_token(
     session: DBSessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-
-    def authenticate_user(
-        *, session: Session, email: str, password: str
-    ) -> User | None:
-        db_user = session.query(User).filter_by(email=email).first()
-        if not db_user:
-            return None
-        if not verify_password(password, db_user.password):
-            return None
-        return db_user
 
     user = authenticate_user(
         session=session, email=form_data.username, password=form_data.password

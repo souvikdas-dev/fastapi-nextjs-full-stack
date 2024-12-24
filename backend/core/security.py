@@ -2,7 +2,10 @@ from datetime import datetime, timedelta, timezone
 
 import bcrypt
 import jwt
+from sqlalchemy.orm import Session
+
 from core.config import settings
+from models import User
 
 ALGORITHM = "HS256"
 
@@ -53,6 +56,15 @@ def verify_password(password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     password = password.encode("utf-8")  # Convert string to bytes
     return bcrypt.hashpw(password, bcrypt.gensalt())
+
+
+def authenticate_user(*, session: Session, email: str, password: str) -> User | None:
+    db_user = session.query(User).filter_by(email=email).first()
+    if not db_user:
+        return None
+    if not verify_password(password, db_user.password):
+        return None
+    return db_user
 
 
 if __name__ == "__main__":
