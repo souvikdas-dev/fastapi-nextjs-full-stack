@@ -10,7 +10,7 @@ from models import User
 ALGORITHM = "HS256"
 
 
-def generate_jwt(payload: dict, expiration_minutes: int | None) -> str:
+def generate_jwt(payload: dict, expiration_minutes: int | None = None) -> str:
     """
     Generates a JWT (JSON Web Token).
 

@@ -181,3 +181,10 @@ def error_format():
         # */
         "attributes": {},
     }
+
+
+VALIDATION_MESSAGES = {
+    "int_parsing": "This is not an integer! 🤦",
+    "url_scheme": "Hey, use the right URL scheme! I wanted {expected_schemes}.",
+    "string_too_short": "The {attribute} field must be at least {min_length} characters.",
+}

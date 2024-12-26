@@ -3,10 +3,10 @@ from typing import Annotated
 
 from pydantic_core import PydanticCustomError
 import requests
-from pydantic import AfterValidator
+from pydantic import AfterValidator, ValidationInfo
 
 
-def validate_name(value: str) -> str:
+def validate_name(value: str, info: ValidationInfo) -> str:
     """validates name (A-Z, a-z, and spaces) & remove leading, trailing, and multiple consecutive spaces between words
 
     Args:
@@ -32,7 +32,7 @@ def validate_name(value: str) -> str:
         raise PydanticCustomError(
             "invalid_name",
             "name should only consists of A-Z, a-z, and spaces",
-            {"attribute": "name"},
+            {"attribute": info.field_name},
         )
 
 
