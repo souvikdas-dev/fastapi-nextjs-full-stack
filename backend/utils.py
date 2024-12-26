@@ -1,6 +1,9 @@
 import re
 from typing import Final
 
+from pydantic import ValidationError
+from pydantic_core import ErrorDetails
+
 # Compile regex patterns once for better performance
 SPECIAL_CHARS_PATTERN: Final = re.compile(r"[-_]")
 CAMEL_CASE_PATTERN: Final = re.compile(r"([a-z0-9])([A-Z])")
@@ -53,6 +56,22 @@ def normalize_case_string(text: str) -> str:
 
     # Clean up spaces and convert to lowercase
     return " ".join(word for word in result.split() if word).lower()
+
+
+def format_validation_errors(
+    e: ValidationError, custom_messages: dict[str, str]
+) -> list[ErrorDetails]:
+    new_errors: list[ErrorDetails] = []
+    for error in e.errors():
+        custom_message = custom_messages.get(error["type"])
+        if custom_message:
+            ctx = error.get("ctx")
+            attribute = normalize_case_string(error.get("loc")[-1])
+            ctx.update({"attribute": attribute, "extra": "extra_data"})
+
+            error["msg"] = custom_message.format(**ctx) if ctx else custom_message
+        new_errors.append(error)
+    return new_errors
 
 
 # Example usage and testing
