@@ -40,7 +40,6 @@ export default function DropDown({
   if (width == "48") width = "w-48";
 
   const toggleIsOpen = () => {
-    console.log("isOpen", isOpen);
     setIsOpen((open) => !open);
   };
 
