@@ -4,7 +4,6 @@ from pydantic import (
     Field,
     ValidationInfo,
     field_validator,
-    model_validator,
 )
 from pydantic_core import PydanticCustomError
 
@@ -25,27 +24,22 @@ class UserRegister(BaseModel):
         min_length=3, max_length=50
     )  # name should be between 3 to 50 characters
     email: EmailStr
-    password: str = Field(min_length=8)  # Password should be at least 8 characters long
-    confirm_password: str
-
-    # @model_validator(mode="after")
-    # def check_passwords_match(self):
-    #     if self.password != self.confirm_password:
-    #         raise ValueError("The :attribute field confirmation does not match.")
-    #     return self
+    password: str = Field(min_length=8)
+    confirm_password: str = Field(min_length=8)
 
     @field_validator("confirm_password", mode="after")
     @classmethod
     def check_passwords_match(cls, value: str, info: ValidationInfo) -> str:
-        if value != info.data["password"]:
-            # raise ValueError(
-            #     f"The {info.field_name} field confirmation does not match."
-            # )
-            raise PydanticCustomError(
-                "confirmation_mismatch",
-                "The {attribute} field confirmation does not match.",
-                {"attribute": "password", "extra_context": "extra_data"},
-            )
+        if "password" in info.data:
+            if value != info.data["password"]:
+                # raise ValueError(
+                #     f"The {info.field_name} field confirmation does not match."
+                # )
+                raise PydanticCustomError(
+                    "confirmation_mismatch",
+                    "The {attribute} field confirmation does not match.",
+                    {"attribute": "password", "extra_context": "extra_data"},
+                )
         return value
 
 
