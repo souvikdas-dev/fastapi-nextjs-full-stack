@@ -1,15 +1,20 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 # from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from core.dependencies import TokenDep
+from core.dependencies import CurrentUserDep, TokenDep
 from routes import auth
+from utils import format_validation_errors
+from validation import VALIDATION_MESSAGES
 
 app = FastAPI(title=settings.PROJECT_NAME)
 # origins = [
 #     "http://localhost",
 #     "http://localhost:8080",
 # ]
+
 
 # app.add_middleware(
 #     CORSMiddleware,
@@ -18,6 +23,17 @@ app = FastAPI(title=settings.PROJECT_NAME)
 #     allow_methods=["*"],
 #     allow_headers=["*"],
 # )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    # return PlainTextResponse(str(exc), status_code=400)
+    return JSONResponse(
+        status_code=422,
+        content={"detail": format_validation_errors(exc, VALIDATION_MESSAGES)},
+    )
+
+
 app.include_router(auth.router)
 
 
@@ -29,3 +45,8 @@ def root():
 @app.get("/items/")
 async def read_items(token: TokenDep):
     return {"token": token}
+
+
+@app.post("/users/me")
+async def get_auth_user(user: CurrentUserDep):
+    return user
