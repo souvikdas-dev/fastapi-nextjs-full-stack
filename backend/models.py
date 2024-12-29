@@ -45,3 +45,12 @@ class User(Base, TimestampMixin, AutoReprMixin):
 
     # def __repr__(self) -> str:
     #     return f"User(id={self.id!r}, name={self.name!r}, email={self.email!r}, password={self.password!r}, is_superuser={self.is_superuser!r}, is_active={self.is_active!r})"
+
+
+class Item(Base, TimestampMixin, AutoReprMixin):
+    __tablename__ = "items"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(255), index=True)
+    description: Mapped[str | None] = mapped_column(String(255), index=True)
+    owner_id: Mapped[int | None] = mapped_column(foreign_key="users.id")
