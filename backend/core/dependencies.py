@@ -19,11 +19,11 @@ def get_db() -> Generator[Session, Any, None]:
         yield session
 
 
-DBSessionDep = Annotated[Session, Depends(get_db)]
+SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
 
-def get_current_user(session: DBSessionDep, token: TokenDep):
+def get_current_user(session: SessionDep, token: TokenDep):
     """get current user from token"""
 
     try:

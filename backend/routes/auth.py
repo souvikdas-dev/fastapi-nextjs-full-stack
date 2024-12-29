@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from core.dependencies import DBSessionDep
+from core.dependencies import SessionDep
 from core.security import (
     authenticate_user,
     generate_jwt,
@@ -16,7 +16,7 @@ router = APIRouter(tags=["auth"])
 
 
 @router.post("/register")
-async def register(user: UserRegister, db: DBSessionDep) -> Token:
+async def register(user: UserRegister, db: SessionDep) -> Token:
     """register api"""
     existing_user = db.query(User).filter_by(email=user.email).first()
 
@@ -43,7 +43,7 @@ async def register(user: UserRegister, db: DBSessionDep) -> Token:
 
 @router.post("/login")
 def login_access_token(
-    session: DBSessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
     """
     OAuth2 compatible token login, get an access token for future requests
