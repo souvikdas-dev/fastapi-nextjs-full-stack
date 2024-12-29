@@ -13,7 +13,12 @@ def read_items(session: SessionDep, skip: int = 0, limit: int = 10):
 
 @router.get("/{id}")
 def read_item(session: SessionDep, id: int):
-    pass
+    item = session.get(Item, id)
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    return item
 
 
 @router.post("/")
