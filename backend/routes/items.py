@@ -8,7 +8,9 @@ router = APIRouter(prefix="/items", tags=["items"])
 
 @router.get("/")
 def read_items(session: SessionDep, skip: int = 0, limit: int = 10):
-    pass
+    items = session.query(Item).offset(skip).limit(limit).all()
+
+    return items
 
 
 @router.get("/{id}")
