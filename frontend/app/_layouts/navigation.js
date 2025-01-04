@@ -1,10 +1,10 @@
 "use client";
+import DropDown from "@/components/DropDown";
+import DropDownLink from "@/components/DropDownLink";
+import NavLink from "@/components/NavLink";
 import Image from "next/image";
-import { logout } from "../_actions/auth";
-import DropDown from "../_components/DropDown";
-import DropDownLink from "../_components/DropDownLink";
-import NavLink from "../_components/NavLink";
 import { usePathname } from "next/navigation";
+import { logout } from "../_actions/auth";
 
 export default function Navigation() {
   const pathname = usePathname();

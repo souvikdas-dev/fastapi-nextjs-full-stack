@@ -1,4 +1,4 @@
-import Navigation from "./navigation";
+import Navigation from "../_layouts/navigation";
 
 export default function AppLayout({ children, header = false }) {
   return (
