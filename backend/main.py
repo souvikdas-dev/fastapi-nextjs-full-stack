@@ -4,8 +4,8 @@ from fastapi.responses import JSONResponse
 
 # from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from core.dependencies import CurrentUserDep, TokenDep
-from routes import auth
+from core.dependencies import CurrentUserDep
+from routes import auth, items
 from utils import format_validation_errors
 from validation import VALIDATION_MESSAGES
 
@@ -35,16 +35,12 @@ async def validation_exception_handler(request, exc):
 
 
 app.include_router(auth.router)
+app.include_router(items.router)
 
 
 @app.get("/")
 def root():
     return {"message": settings.PROJECT_NAME}
-
-
-@app.get("/items/")
-async def read_items(token: TokenDep):
-    return {"token": token}
 
 
 @app.post("/users/me")
