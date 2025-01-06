@@ -1,8 +1,8 @@
 from datetime import datetime
 
 import click
-from sqlalchemy import String, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Float, ForeignKey, String, Text, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -51,6 +51,9 @@ class Item(Base, TimestampMixin, AutoReprMixin):
     __tablename__ = "items"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(255), index=True)
-    description: Mapped[str | None] = mapped_column(String(255), index=True)
-    owner_id: Mapped[int | None] = mapped_column(foreign_key="users.id")
+    name: Mapped[str] = mapped_column(String(255), index=True)
+    description: Mapped[str | None] = mapped_column(Text, index=True)
+    price: Mapped[float | None] = mapped_column(index=True, default=0)
+    owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+
+    owner: Mapped[User] = relationship()

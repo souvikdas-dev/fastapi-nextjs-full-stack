@@ -1,5 +1,7 @@
+from datetime import datetime
 from pydantic import (
     BaseModel,
+    ConfigDict,
     EmailStr,
     Field,
     ValidationInfo,
@@ -41,6 +43,28 @@ class UserRegister(BaseModel):
                     {"attribute": "password", "extra_context": "extra_data"},
                 )
         return value
+
+
+class ItemBase(BaseModel):
+    name: str
+    description: str | None = None
+    price: float | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ItemCreate(ItemBase):
+    pass
+
+
+class ItemUpdate(ItemBase):
+    name: str | None
+
+
+class ItemResponse(ItemBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
 
 
 # JSON payload containing access token
