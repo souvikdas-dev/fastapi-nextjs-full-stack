@@ -2,7 +2,7 @@
 import { signup } from "@/app/_actions/auth";
 import InputError from "@/components/InputError";
 import InputLabel from "@/components/InputLabel";
-import PrimaryButton from "@/components/PrimaryButton";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import TextInput from "@/components/TextInput";
 import clsx from "clsx";
 import Link from "next/link";
