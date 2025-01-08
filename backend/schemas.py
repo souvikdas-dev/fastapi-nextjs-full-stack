@@ -1,10 +1,12 @@
 from datetime import datetime
+import humanize
 from pydantic import (
     BaseModel,
     ConfigDict,
     EmailStr,
     Field,
     ValidationInfo,
+    computed_field,
     field_validator,
 )
 from pydantic_core import PydanticCustomError
@@ -65,6 +67,11 @@ class ItemResponse(ItemBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+    @computed_field
+    @property
+    def last_updated(self) -> str:
+        return humanize.naturaltime(self.updated_at)
 
 
 # JSON payload containing access token
