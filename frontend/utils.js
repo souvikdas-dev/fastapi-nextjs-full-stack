@@ -1,10 +1,16 @@
-export const formatFieldErrors = (errors) => {
-  return errors.reduce((acc, obj) => {
-    const key = obj.loc[1]; // Grouping by the field property eg: "name", "email", or "age"
-    if (!acc[key]) acc[key] = []; // Initialize the array for each name if not already present
-    acc[key].push(obj.msg); // Push the age to the corresponding name's array
-    return acc;
-  }, {});
+export const formatErrors = (errors) => {
+  if (errors instanceof Array)
+    return errors.reduce((acc, obj) => {
+      const key = obj.loc[1] ?? "server_errors";
+      // Initialize object attribute if not present
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(obj.msg);
+      return acc;
+    }, {});
+  else
+    return {
+      server_errors: [errors],
+    };
 };
 
 export const extractFormFields = (formData, fields = []) => {

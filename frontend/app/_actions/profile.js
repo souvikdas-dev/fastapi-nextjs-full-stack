@@ -1,6 +1,6 @@
 "use server";
 
-import { formatFieldErrors } from "@/utils";
+import { formatErrors } from "@/utils";
 import axios from "axios";
 import { getAccessToken } from "../_lib/session";
 
@@ -46,7 +46,7 @@ export async function updateProfile(state, formData) {
 
         if (response.status === 422) {
           // returning object
-          errors = formatFieldErrors(response.data.detail);
+          errors = formatErrors(response.data.detail);
         } else {
           errors = {
             server_errors: [response.data.detail],

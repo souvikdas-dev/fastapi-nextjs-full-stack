@@ -7,6 +7,7 @@ import TextInput from "@/components/TextInput";
 import clsx from "clsx";
 import Link from "next/link";
 import { useActionState } from "react";
+import ServerErrors from "@/components/ServerErrors";
 
 export default function SignUpPage() {
   const [state, action, pending] = useActionState(signup, undefined);
@@ -91,30 +92,8 @@ export default function SignUpPage() {
       </div>
 
       {/* server errors */}
-      {state?.serverErrors && (
-        <div
-          className="flex p-4 mt-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 ---dark:bg-gray-800 ---dark:text-red-400"
-          role="alert"
-        >
-          <svg
-            className="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-          </svg>
-          <span className="sr-only">Danger</span>
-          <div>
-            <span className="font-medium">Some errors occurs..</span>
-            <ul className="mt-1.5 list-disc list-inside">
-              {state?.serverErrors?.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+      {state?.errors?.server_errors && (
+        <ServerErrors messages={state?.errors?.server_errors} />
       )}
 
       <div className="flex items-center justify-end mt-4">
