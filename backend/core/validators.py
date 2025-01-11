@@ -1,9 +1,9 @@
 import re
 from typing import Annotated
 
-from pydantic_core import PydanticCustomError
 import requests
 from pydantic import AfterValidator, ValidationInfo
+from pydantic_core import PydanticCustomError
 
 
 def validate_name(value: str, info: ValidationInfo) -> str:

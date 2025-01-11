@@ -10,13 +10,13 @@ from core.security import (
     get_password_hash,
 )
 from models import User
-from schemas import Token, UserRegister
+from schemas import Token, UserSignupRequest
 
 router = APIRouter(tags=["auth"])
 
 
-@router.post("/register")
-async def register(user: UserRegister, db: SessionDep) -> Token:
+@router.post("/singup")
+async def singup(user: UserSignupRequest, db: SessionDep) -> Token:
     """register api"""
     existing_user = db.query(User).filter_by(email=user.email).first()
 

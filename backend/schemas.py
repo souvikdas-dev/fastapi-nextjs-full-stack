@@ -14,16 +14,14 @@ from pydantic_core import PydanticCustomError
 from core.validators import NameStr
 
 
-class User(BaseModel):
-    id: str
+class UserBase(BaseModel):
     name: str
     email: EmailStr
-    password: str
     is_superuser: bool
     is_active: bool
 
 
-class UserRegister(BaseModel):
+class UserSignupRequest(BaseModel):
     name: NameStr = Field(
         min_length=3, max_length=50
     )  # name should be between 3 to 50 characters
@@ -45,6 +43,17 @@ class UserRegister(BaseModel):
                     {"attribute": "password", "extra_context": "extra_data"},
                 )
         return value
+
+
+class UserResponse(UserBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    @computed_field
+    @property
+    def last_updated(self) -> str:
+        return humanize.naturaltime(self.updated_at)
 
 
 class ItemBase(BaseModel):
@@ -78,3 +87,8 @@ class ItemResponse(ItemBase):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class ProfileUpadteRequest(BaseModel):
+    name: NameStr | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
