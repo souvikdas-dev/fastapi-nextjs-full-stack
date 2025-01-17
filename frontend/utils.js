@@ -27,3 +27,8 @@ export const extractFormFields = (formData, fields = []) => {
     return acc;
   }, {});
 };
+
+export function wait(seconds = 1.5) {
+  // default wait for 1.5 seconds
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+}
