@@ -2,12 +2,10 @@
 
 import { formatErrors } from "@/utils";
 import axios from "axios";
+import { revalidatePath } from "next/cache";
 import { getAccessToken } from "../_lib/session";
 
 export async function updateProfile(state, formData) {
-  //** wait for 6 seconds */
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
   const access_token = await getAccessToken();
 
   const form_fields = {
@@ -26,7 +24,7 @@ export async function updateProfile(state, formData) {
     })
     .then(function (response) {
       // console.log(response);
-
+      revalidatePath("/profile");
       return {
         formData: form_fields,
         status: "profile-updated",

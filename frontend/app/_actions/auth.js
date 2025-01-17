@@ -1,14 +1,12 @@
 "use server";
 
-import { formatErrors } from "@/utils";
+import { formatErrors, wait } from "@/utils";
 import axios from "axios";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession } from "../_lib/session";
+import { cache } from "react";
+import { createSession, deleteSession, getAccessToken } from "../_lib/session";
 
 export async function signup(state, formData) {
-  //** wait for 6 seconds */
-  // await new Promise((resolve) => setTimeout(resolve, 6000));
-
   const form_data = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -84,9 +82,6 @@ export async function signup(state, formData) {
 }
 
 export async function login(state, formData) {
-  //** wait for 6 seconds */
-  // await new Promise((resolve) => setTimeout(resolve, 6000));
-
   const form_fields = {
     username: formData.get("username"),
     password: formData.get("password"),
@@ -154,3 +149,42 @@ export async function logout() {
   await deleteSession();
   redirect("/login");
 }
+
+export const getAuthUser = cache(async () => {
+  const access_token = await getAccessToken();
+
+  return axios
+    .post(
+      process.env.BACKEND_API_URL + "/users/me",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    )
+    .then((response) => response.data)
+    .catch(function (error) {
+      // TODO: modify as profuction
+      const production = true;
+      if (!production) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      }
+      return null;
+    });
+});

@@ -68,8 +68,8 @@ export default function DropDown({
             contentClasses,
             isOpen ? "block" : "hidden"
           )}
-          onClick={(e) => e.stopPropagation()}
         >
+          {/* onClick={(e) => e.stopPropagation()} */}
           {children}
         </div>
       </div>
