@@ -1,5 +1,6 @@
 from datetime import datetime
-import humanize
+
+import arrow
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -53,7 +54,7 @@ class UserResponse(UserBase):
     @computed_field
     @property
     def last_updated(self) -> str:
-        return humanize.naturaltime(self.updated_at)
+        return arrow.get(self.updated_at).to("local").humanize()
 
 
 class ItemBase(BaseModel):
@@ -80,7 +81,18 @@ class ItemResponse(ItemBase):
     @computed_field
     @property
     def last_updated(self) -> str:
-        return humanize.naturaltime(self.updated_at)
+        return arrow.get(self.updated_at).to("local").humanize()
+        # return humanize.naturaltime(self.updated_at)
+
+
+class ItemPaginateResponse(BaseModel):
+    total: int
+    per_page: int
+    current_page: int
+    last_page: int
+    from_: int
+    to_: int
+    data: list[ItemResponse]
 
 
 # JSON payload containing access token

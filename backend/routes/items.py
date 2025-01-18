@@ -1,17 +1,37 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+from sqlalchemy import func, select
 
-from core.dependencies import SessionDep
+from core.dependencies import CurrentUserDep, SessionDep
 from models import Item
-from schemas import ItemCreate, ItemResponse, ItemUpdate
+from schemas import ItemBase, ItemCreate, ItemPaginateResponse, ItemResponse, ItemUpdate
+from rich import print
 
 router = APIRouter(prefix="/items", tags=["items"])
 
 
-@router.get("/", response_model=list[ItemResponse])
-def read_items(session: SessionDep, skip: int = 0, limit: int = 10):
-    items = session.query(Item).offset(skip).limit(limit).all()
+@router.get("/", response_model=ItemPaginateResponse)
+def read_items(
+    session: SessionDep, page: int = Query(1, ge=1), limit: int = Query(10, le=100)
+):
+    total = session.scalar(select(func.count(Item.id)))
+    print(total)
+    offset = (page - 1) * limit
+    print(offset)
+    items = session.query(Item).offset(offset).limit(limit).all()
+    print(items)
 
-    return items
+    # print(ItemBase(**items[0]))
+
+    return {
+        "total": total,
+        "per_page": limit,
+        "current_page": page,
+        "last_page": (total // limit) + (1 if total % limit > 0 else 0),
+        "from_": offset + 1,
+        "to_": offset + len(items),
+        "data": items,
+        # "data": [ItemResponse.model_validate(item) for item in items],
+    }
 
 
 @router.get("/{id}", response_model=ItemResponse)

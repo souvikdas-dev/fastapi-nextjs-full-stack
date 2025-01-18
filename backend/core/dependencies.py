@@ -11,7 +11,7 @@ from core.database import engine
 from core.security import ALGORITHM
 from models import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 
 def get_db() -> Generator[Session, Any, None]:
