@@ -118,170 +118,129 @@ export default function Pagination({
     <nav
       role="navigation"
       aria-label="Pagination Navigation"
-      className={clsx("flex items-center justify-between", className)}
+      className={clsx(
+        "sm:flex-1 sm:flex sm:items-center sm:justify-between",
+        className
+      )}
     >
-      <div className="flex justify-between flex-1 sm:hidden">
+      <div className="hidden sm:block">
+        <p className="text-sm leading-5 text-gray-700 ">
+          Showing
+          {from ? (
+            <>
+              <span className="font-medium"> {from} </span>to
+              <span className="font-medium"> {to} </span>
+            </>
+          ) : (
+            count
+          )}
+          of
+          <span className="font-medium text-blue-700"> {total} </span>
+          results
+        </p>
+      </div>
+
+      <div className="relative z-0 flex sm:inline-flex justify-between rounded-md gap-x-1.5 rtl:flex-row-reverse">
+        {/* {{-- Previous Page Link --}} */}
         {hasPrevious ? (
           <Link
             href={previousPageUrl}
-            className="relative inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700"
+            rel="prev"
+            className="relative inline-flex items-center justify-center py-2 pl-2 pr-3 text-xs font-medium leading-5 text-black transition duration-150 ease-in-out bg-white border rounded-md sm:border-transparent sm:bg-transparent hover:border-gray-300 hover:bg-gray-200 focus:outline-none"
+            aria-label="previous"
           >
-            Previous
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            PREV
           </Link>
         ) : (
-          <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium leading-5 text-gray-500 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed">
-            Previous
+          <span aria-disabled="true" aria-label="previous">
+            <span
+              className="relative inline-flex items-center py-2 pl-2 pr-3 text-xs font-medium leading-5 text-gray-500 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed"
+              aria-hidden="true"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              PREV
+            </span>
           </span>
         )}
 
+        {/* -- Pagination Elements -- */}
+        {pages.map((page, index) => {
+          if (typeof page === "string") {
+            // -- "Three Dots" Separator --
+            return (
+              <span aria-disabled="true" key={"..." + index}>
+                <span className="relative items-center hidden px-4 py-2 -ml-px text-xs font-medium leading-5 text-gray-700 bg-transparent cursor-default sm:inline-flex">
+                  {page}
+                </span>
+              </span>
+            );
+          } else {
+            return page == currentPage ? (
+              <span aria-current="page" key={`${page}-${index}`}>
+                <span className="relative items-center hidden px-4 py-2 -ml-px text-xs font-medium leading-5 text-black bg-white border border-gray-500 rounded-md shadow-sm cursor-default sm:inline-flex">
+                  {page}
+                </span>
+              </span>
+            ) : (
+              <Link
+                href={pathname + "?" + createQueryString("page", page)}
+                className="relative items-center hidden px-4 py-2 -ml-px text-xs font-medium leading-5 text-black transition duration-150 ease-in-out bg-transparent rounded-md sm:inline-flex hover:bg-gray-200 focus:outline-none"
+                aria-label="{{ __('Go to page :page', ['page' => $page]) }}"
+                key={`${page}-${index}`}
+              >
+                {page}
+              </Link>
+            );
+          }
+        })}
+
+        {/* {{-- Next Page Link --}} */}
         {hasNext ? (
           <Link
             href={nextPageUrl}
-            className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700"
+            rel="next"
+            className="relative inline-flex items-center justify-center py-2 pl-3 pr-2 text-xs font-medium leading-5 text-black transition duration-150 ease-in-out bg-white border rounded-md sm:bg-transparent sm:border-transparent hover:border-gray-300 hover:bg-gray-200 focus:outline-none"
+            aria-label="next"
           >
-            Next
+            NEXT
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
           </Link>
         ) : (
-          <span className="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium leading-5 text-gray-500 bg-gray-100 border border-gray-300 rounded-md cursor-not-allowed">
-            Next
+          <span aria-disabled="true" aria-label="next">
+            <span
+              className="relative inline-flex items-center py-2 pl-3 pr-2 text-xs font-medium leading-5 text-gray-500 bg-gray-200 border border-gray-300 rounded-md cursor-not-allowed"
+              aria-hidden="true"
+            >
+              NEXT
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
           </span>
         )}
-      </div>
-
-      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm leading-5 text-gray-700 ">
-            Showing
-            {from ? (
-              <>
-                <span className="font-medium"> {from} </span>to
-                <span className="font-medium"> {to} </span>
-              </>
-            ) : (
-              count
-            )}
-            of
-            <span className="font-medium"> {total} </span>
-            results
-          </p>
-        </div>
-
-        <div>
-          <span className="relative z-0 inline-flex rounded-md shadow-sm rtl:flex-row-reverse">
-            {/* {{-- Previous Page Link --}} */}
-            {hasPrevious ? (
-              <Link
-                href={previousPageUrl}
-                rel="prev"
-                className="relative inline-flex items-center px-2 py-2 text-sm font-medium leading-5 text-gray-500 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-l-md hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500"
-                aria-label="previous"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-            ) : (
-              <span aria-disabled="true" aria-label="previous">
-                <span
-                  className="relative inline-flex items-center px-2 py-2 text-sm font-medium leading-5 text-gray-500 bg-gray-100 border border-gray-300 cursor-not-allowed rounded-l-md"
-                  aria-hidden="true"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-              </span>
-            )}
-
-            {/* -- Pagination Elements -- */}
-            {pages.map((page, index) => {
-              if (typeof page === "string") {
-                // -- "Three Dots" Separator --
-                return (
-                  <span aria-disabled="true" key={"..." + index}>
-                    <span className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium leading-5 text-gray-700 bg-white border border-gray-300 cursor-default">
-                      {page}
-                    </span>
-                  </span>
-                );
-              } else {
-                return page == currentPage ? (
-                  <span aria-current="page" key={`${page}-${index}`}>
-                    <span className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium leading-5 text-gray-500 bg-white border border-gray-300 shadow-inner cursor-default">
-                      {page}
-                    </span>
-                  </span>
-                ) : (
-                  <Link
-                    href={pathname + "?" + createQueryString("page", page)}
-                    className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700"
-                    aria-label="{{ __('Go to page :page', ['page' => $page]) }}"
-                    key={`${page}-${index}`}
-                  >
-                    {page}
-                  </Link>
-                );
-              }
-            })}
-
-            {/* {{-- Next Page Link --}} */}
-            {hasNext ? (
-              <Link
-                href={nextPageUrl}
-                rel="next"
-                className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium leading-5 text-gray-500 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-r-md hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500"
-                aria-label="next"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-            ) : (
-              <span aria-disabled="true" aria-label="next">
-                <span
-                  className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium leading-5 text-gray-500 bg-gray-100 border border-gray-300 cursor-not-allowed rounded-r-md"
-                  aria-hidden="true"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-              </span>
-            )}
-          </span>
-        </div>
       </div>
     </nav>
   );

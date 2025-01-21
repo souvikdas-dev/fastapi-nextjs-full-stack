@@ -5,6 +5,7 @@ import NavLink from "@/components/NavLink";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logout } from "../_actions/auth";
+import Link from "next/link";
 
 export default function Navigation({ user, ...props }) {
   const pathname = usePathname();
@@ -17,7 +18,7 @@ export default function Navigation({ user, ...props }) {
           <div className="flex">
             {/* <!-- Logo --> */}
             <div className="flex items-center shrink-0">
-              <a href="{{ route('dashboard') }}">
+              <Link href="/dashboard">
                 {/* <x-application-logo className="block w-auto text-gray-800 fill-current h-9" /> */}
                 <Image
                   // className="dark:invert"
@@ -27,7 +28,7 @@ export default function Navigation({ user, ...props }) {
                   height={38}
                   priority
                 />
-              </a>
+              </Link>
             </div>
 
             {/* <!-- Navigation Links --> */}

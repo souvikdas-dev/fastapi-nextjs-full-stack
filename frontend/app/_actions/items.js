@@ -1,10 +1,14 @@
 "use server";
 
-import { cache } from "react";
-import { getAccessToken } from "../_lib/session";
+import { wait } from "@/utils";
 import axios from "axios";
+import { revalidatePath } from "next/cache";
+import { getAccessToken } from "../_lib/session";
 
 export const fetchItems = async ({ page, limit, ...searchParams }) => {
+  // wait for 2 sec
+  await wait(2);
+
   const access_token = await getAccessToken();
 
   return axios
@@ -43,5 +47,47 @@ export const fetchItems = async ({ page, limit, ...searchParams }) => {
       console.log(error.config);
 
       return [];
+    });
+};
+
+export const saveItem = async ({ state, formData }) => {
+  return { formData };
+};
+
+export const updateItem = async ({ state, formData }) => {
+  return { formData };
+};
+
+export const deleteItem = async (id) => {
+  // wait for 1.5 sec
+  await wait(1.5);
+
+  const access_token = await getAccessToken();
+
+  return await axios
+    .delete(
+      process.env.BACKEND_API_URL + `/items/${id}`,
+      {},
+      {
+        headers: {
+          // "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    )
+    .then((res) => {
+      revalidatePath("/items");
+      return {
+        ok: true,
+        status: "ok",
+        message: "Item Deleted Successfully",
+      };
+    })
+    .catch((err) => {
+      return {
+        ok: false,
+        status: "error",
+        message: "Failed to delete Item.",
+      };
     });
 };
